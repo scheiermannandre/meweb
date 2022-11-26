@@ -114,7 +114,8 @@ class _HeaderBarTextItemState extends State<HeaderBarTextItem> {
       child: Text(
         text,
         style: TextStyle(
-            color: showBold ? Colors.white : null,
+          fontSize: 20,
+            color: showBold ? Colors.white : Colors.grey[400],
             fontWeight: showBold ? FontWeight.bold : FontWeight.normal),
       ),
     );

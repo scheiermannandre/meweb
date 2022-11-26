@@ -8,6 +8,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.0.3"
+  animated_background:
+    dependency: "direct main"
+    description:
+      name: animated_background
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   animated_text_kit:
     dependency: "direct main"
     description:
@@ -158,6 +165,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
+  metaballs:
+    dependency: "direct main"
+    description:
+      name: metaballs
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.2"
+  parallax_rain:
+    dependency: "direct main"
+    description:
+      name: parallax_rain
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   path:
     dependency: transitive
     description:

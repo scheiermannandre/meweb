@@ -1,9 +1,46 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:meweb/Navigation/headerBar.dart';
+import 'package:meweb/Widgets/animated_introduction.dart';
+import 'package:meweb/Widgets/appbar.dart';
+import 'package:metaballs/metaballs.dart';
+
+class ColorsEffectPair {
+  final List<Color> colors;
+  final MetaballsEffect? effect;
+  final String name;
+
+  ColorsEffectPair({
+    required this.colors,
+    required this.name,
+    required this.effect,
+  });
+}
+
+List<ColorsEffectPair> colorsAndEffects = [
+  ColorsEffectPair(colors: [
+    const Color.fromARGB(255, 255, 21, 0),
+    const Color.fromARGB(255, 255, 153, 0),
+  ], effect: MetaballsEffect.follow(), name: 'FOLLOW'),
+  ColorsEffectPair(colors: [
+    const Color.fromARGB(255, 0, 255, 106),
+    const Color.fromARGB(255, 255, 251, 0),
+  ], effect: MetaballsEffect.grow(), name: 'GROW'),
+  ColorsEffectPair(colors: [
+    const Color.fromARGB(255, 90, 60, 255),
+    const Color.fromARGB(255, 120, 255, 255),
+  ], effect: MetaballsEffect.speedup(), name: 'SPEEDUP'),
+  ColorsEffectPair(colors: [
+    const Color.fromARGB(255, 255, 60, 120),
+    const Color.fromARGB(255, 237, 120, 255),
+  ], effect: MetaballsEffect.ripple(), name: 'RIPPLE'),
+  ColorsEffectPair(colors: [
+    const Color.fromARGB(255, 120, 217, 255),
+    const Color.fromARGB(255, 255, 234, 214),
+  ], effect: null, name: 'NONE'),
+];
 
 void main() {
+// enable dithering to smooth out the gradients and metaballs
+  Paint.enableDithering = true;
   runApp(const MyApp());
 }
 
@@ -30,6 +67,23 @@ class MyApp extends StatelessWidget {
         900: Color(0xFF000000),
       },
     );
+    const int _transparentPrimaryValue = 0x00FFFFFF;
+
+    const MaterialColor primaryTransparent = MaterialColor(
+      _blackPrimaryValue,
+      <int, Color>{
+        50: Color(0x00FFFFFF),
+        100: Color(0x00FFFFFF),
+        200: Color(0x00FFFFFF),
+        300: Color(0x00FFFFFF),
+        400: Color(0x00FFFFFF),
+        500: Color(_transparentPrimaryValue),
+        600: Color(0x00FFFFFF),
+        700: Color(0x00FFFFFF),
+        800: Color(0x00FFFFFF),
+        900: Color(0x00FFFFFF),
+      },
+    );
     const int _redPrimaryValue = 0xFF5e2028;
 
     const MaterialColor primaryRed = MaterialColor(
@@ -48,15 +102,19 @@ class MyApp extends StatelessWidget {
       },
     );
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
         hoverColor: Colors.transparent,
         fontFamily: 'RobotoMono',
-        primarySwatch: primaryBlack,
-        scaffoldBackgroundColor: primaryBlack,
+        primarySwatch: primaryTransparent, // primaryBlack,
+        scaffoldBackgroundColor: Colors.black,
         dividerColor: Color.fromARGB(255, 145, 140, 140),
+        scrollbarTheme: ScrollbarThemeData().copyWith(
+            thumbColor: MaterialStateProperty.all(Colors.white),
+            trackColor: MaterialStateProperty.all(Colors.grey[500])),
         buttonTheme:
             ButtonThemeData(buttonColor: Color.fromARGB(255, 94, 32, 40)),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -86,15 +144,6 @@ class MyApp extends StatelessWidget {
               bodyColor: Colors.white,
               displayColor: Colors.white,
             ),
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -103,16 +152,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -120,110 +159,157 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final sw = MediaQuery.of(context).size.width;
-    print("HALLO");
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    double maxWidth = 1200.toDouble();
     return Scaffold(
-      appBar: AppBar(
-          // backgroundColor: Color.fromRGBO(107, 3, 6, 1),
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: const HeaderBar()),
-      body: Center(
+      body: Scrollbar(
+        thickness: 5,
+        //trackVisibility: true,
+        thumbVisibility: true,
         child: Container(
-          //color: Colors.yellow,
-          width: 1200.toDouble(),
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-          child:
-              // Center is a layout widget. It takes a single child and positions it
-              // in the middle of the parent.
-              Column(
-            // Column is also a layout widget. It takes a list of children and
-            // arranges them vertically. By default, it sizes itself to fit its
-            // children horizontally, and tries to be as tall as its parent.
-            //
-            // Invoke "debug painting" (press "p" in the console, choose the
-            // "Toggle Debug Paint" action from the Flutter Inspector in Android
-            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-            // to see the wireframe for each widget.
-            //
-            // Column has various properties to control how it sizes itself and
-            // how it positions its children. Here we use mainAxisAlignment to
-            // center the children vertically; the main axis here is the vertical
-            // axis because Columns are vertical (the cross axis would be
-            // horizontal).
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const Text(
-                "Hello,",
-                style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  const Text(
-                    "I am ",
-                    style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
-                  ),
-                  AnimatedTextKit(repeatForever: true, animatedTexts: [
-                    TypewriterAnimatedText(
-                      "André Scheiermann",
-                      textStyle: const TextStyle(
-                        fontSize: 50,
-                        fontWeight: FontWeight.bold,
+          decoration: const BoxDecoration(
+              gradient: RadialGradient(
+                  center: Alignment.bottomCenter,
+                  radius: 1.5,
+                  colors: [
+                Color.fromARGB(255, 13, 35, 61),
+                Colors.black,
+              ])),
+          child: Metaballs(
+            effect: MetaballsEffect.follow(),
+            glowRadius: 1,
+            glowIntensity: 0.6,
+            maxBallRadius: 35,
+            minBallRadius: 15,
+            metaballs: 80,
+            speedMultiplier: 1,
+            bounceStiffness: 3,
+            color: Colors.grey,
+            gradient: const LinearGradient(colors: [
+              Color.fromARGB(0, 237, 133, 68),
+              //Color(0x00110916),
+              Color(0x004fb2e7),
+              //Color(0x0067383b),
+            ], begin: Alignment.bottomRight, end: Alignment.topLeft),
+            child: Center(
+              child: SizedBox(
+                width: maxWidth,
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context)
+                      .copyWith(scrollbars: false),
+                  child: CustomScrollView(
+                    reverse: false,
+                    slivers: <Widget>[
+                      const SliverAppBar(
+                        // Provide a standard title.
+                        //title: CustomAppBar(maxWidth: 1200),
+                        // Allows the user to reveal the app bar if they begin scrolling
+                        // back up the list of items.
+                        floating: true,
+                        // Display a placeholder widget to visualize the shrinking size.
+                        flexibleSpace: CustomAppBar(headerTexts: [
+                          "01 : Home",
+                          "02 : About me",
+                          "03 : Projects",
+                          "04 : Blog"
+                        ], maxWidth: 1200),
+                        // Make the initial height of the SliverAppBar larger than normal.
+                        expandedHeight: 100,
+                        backgroundColor: Colors.transparent,
                       ),
-                      speed: const Duration(milliseconds: 100),
-                    ),
-                    TypewriterAnimatedText(
-                      "a Software Engineer",
-                      textStyle: const TextStyle(
-                        fontSize: 50,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      speed: const Duration(milliseconds: 100),
-                    ),
-                    TypewriterAnimatedText("a Sport Enthusiast",
-                        textStyle: const TextStyle(
-                          fontSize: 50,
-                          fontWeight: FontWeight.bold,
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            const Text(
+                              "Hello,",
+                              style: TextStyle(
+                                  fontSize: 50, fontWeight: FontWeight.bold),
+                            ),
+                            Wrap(
+                              children: [
+                                const Text(
+                                  "I am ",
+                                  style: TextStyle(
+                                      fontSize: 50,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                AnimatedIntroduction(
+                                  textsForAnimation: const [
+                                    "André Scheiermann",
+                                    "a Software Engineer",
+                                    "a Sport Entusiast",
+                                  ],
+                                )
+                              ],
+                            ),
+                          ],
                         ),
-                        speed: const Duration(milliseconds: 100)),
-                  ]),
-                ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ],
+            ),
           ),
         ),
       ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
 
 
+
+
+// class HomePage extends StatefulWidget {
+//   const HomePage({Key? key}) : super(key: key);
+
+//   @override
+//   State<HomePage> createState() => _HomePageState();
+// }
+
+// class _HomePageState extends State<HomePage> {
+//   int colorEffectIndex = 0;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     double width = MediaQuery.of(context).size.width;
+
+//     return Material(
+//       child: GestureDetector(
+//         onDoubleTap: () {
+//           setState(() {
+//             colorEffectIndex = (colorEffectIndex + 1) % colorsAndEffects.length;
+//           });
+//         },
+//         child: Container(
+//           decoration: const BoxDecoration(
+//               gradient: RadialGradient(
+//                   center: Alignment.bottomCenter,
+//                   radius: 1.5,
+//                   colors: [
+//                 Color.fromARGB(255, 13, 35, 61),
+//                 Colors.black,
+//               ])),
+//           child: Metaballs(
+//             effect: colorsAndEffects[colorEffectIndex].effect,
+//             glowRadius: 1,
+//             glowIntensity: 0.6,
+//             maxBallRadius: 50,
+//             minBallRadius: 20,
+//             metaballs: 40,
+//             color: Colors.grey,
+//             gradient: LinearGradient(
+//                 colors: colorsAndEffects[colorEffectIndex].colors,
+//                 begin: Alignment.bottomRight,
+//                 end: Alignment.topLeft),
+//             child: 
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

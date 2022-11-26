@@ -2,13 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:meweb/Navigation/headerBarItem.dart';
 
 class HeaderBar extends StatefulWidget {
-  const HeaderBar({Key? key}) : super(key: key);
+  final List<String> headerTexts;
+  const HeaderBar({Key? key, required this.headerTexts}) : super(key: key);
 
   @override
   State<HeaderBar> createState() => _HeaderBarState();
 }
 
 class _HeaderBarState extends State<HeaderBar> {
+  late List<String> headerTexts = widget.headerTexts;
+
+  List<Widget> buildHeaderItems() {
+    List<Widget> headerItems = [];
+    headerTexts.asMap().forEach((index, value) => {
+          headerItems.add(HeaderBarTextItem(text: value)),
+          if (index < headerTexts.length - 1)
+            {headerItems.add(VerticalDivider(thickness: 1))}
+        });
+
+    return headerItems;
+  }
+
   @override
   Widget build(BuildContext context) {
     final sw = MediaQuery.of(context).size.width;
@@ -16,31 +30,9 @@ class _HeaderBarState extends State<HeaderBar> {
     if (sw > 800.toDouble()) {
       return IntrinsicHeight(
           child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          HeaderBarTextItem(
-            text: "01 : Home",
-          ),
-          VerticalDivider(
-            thickness: 1,
-          ),
-          HeaderBarTextItem(
-            text: "02 : About me",
-          ),
-          VerticalDivider(
-            thickness: 1,
-          ),
-          HeaderBarTextItem(
-            text: "03 : Projects",
-          ),
-          VerticalDivider(
-            thickness: 1,
-          ),
-          HeaderBarTextItem(
-            text: "04 : Blog",
-          ),
-        ],
-      ));
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: buildHeaderItems()));
     } else {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
