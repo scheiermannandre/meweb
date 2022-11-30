@@ -4,18 +4,27 @@ import 'package:meweb/Navigation/headerBar.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<String> headerTexts;
   final double maxWidth;
-  const CustomAppBar({Key? key, required this.maxWidth, required this.headerTexts}) : super(key: key);
+  final Color backgroundColor;
+  const CustomAppBar(
+      {Key? key, required this.maxWidth, required this.headerTexts, required this.backgroundColor})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Align(
+    return Container(
+      color: Colors.transparent,
+      width: double.infinity,
       alignment: Alignment.center,
       child: Container(
-        alignment: Alignment.centerLeft,
-        //color: Colors.transparent,
+        color:backgroundColor,
         width: maxWidth,
-        //height: 200,
-        child: HeaderBar(headerTexts: headerTexts,),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: HeaderBar(
+            headerTexts: headerTexts,
+            onTap: () {},
+          ),
+        ),
       ),
     );
   }

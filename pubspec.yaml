@@ -40,6 +40,7 @@ dependencies:
   animated_background: ^2.0.0
   metaballs: ^1.4.2
   parallax_rain: ^1.1.0
+  slide_drawer: ^1.0.3
 
 dev_dependencies:
   flutter_test:
